@@ -8,8 +8,8 @@ import Faq from "./Faq";
 const Index = () => {
   return (
     <>
-      {/* <Hero /> */}
-      {/* <Category /> */}
+      <Hero />
+      <Category />
       <Product />
       <Gallery />
       <Faq />

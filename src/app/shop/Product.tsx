@@ -1,11 +1,7 @@
-
 "use client";
-
-import React from "react";
 import styled from "@emotion/styled";
-
-import { ProductData } from "../../database/index";
-
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import GalleryCard from "../../componets/GalleryCard";
 const RootContainer = styled.div({
   paddingBottom: "100px",
@@ -50,23 +46,38 @@ const Button = styled.button({
   border: "solid black 2px",
 });
 
-
 const FooterImage = styled.img(() => ({}));
 
 const Product = () => {
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:2000/product")
+      .then(function (response) {
+        setData(response.data.data);
+      })
+      .catch(function (err) {
+        console.log(err);
+      });
+  }, []);
+  console.log("object", data);
   return (
     <RootContainer>
       <CategoriesHeading>Top Products</CategoriesHeading>
 
       <Flex>
-        {ProductData.map((item: any, index: any) => (
-          <GalleryCard
-            key={index}
-            image={item.image}
-            name={item.name}
-            price={item.price}
-          />
-        ))}
+        {data.map((item: any) => {
+          const imageUrl = `http://localhost:2000/${item.image}`;
+          return (
+            <GalleryCard
+              key={item._id}
+              name={item.name}
+              image={{ src: imageUrl }}
+              price={item.price}
+            />
+          );
+        })}
       </Flex>
 
       <FooterArea>

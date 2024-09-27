@@ -4,6 +4,7 @@ import React, { FC } from "react";
 import Button from "./button/Button";
 import ArrowRight from "./ArrowIcon";
 import Cart from "../../src/app/home/Cart";
+import { useRouter } from 'next/navigation'
 
 interface CategoriesProps {
   name?: string;
@@ -65,6 +66,8 @@ const Image = styled.img(() => ({
 }));
 
 const Category: FC<CategoriesProps> = ({ name, image, width, style }) => {
+
+  const router = useRouter()
   return (
     <RootContainer>
       <RootText>
@@ -80,6 +83,7 @@ const Category: FC<CategoriesProps> = ({ name, image, width, style }) => {
               name="Shop now"
               color="rgba(104, 106, 116, 1)"
               border="solid black 2px"
+              onClick={() => router.push("/shop")}
             />
           </div>
         </div>
@@ -87,7 +91,7 @@ const Category: FC<CategoriesProps> = ({ name, image, width, style }) => {
       <RootImage>
         <Image src={image.src} width={width} />
       </RootImage>
-    </RootContainer>    
+    </RootContainer>
   );
 };
 

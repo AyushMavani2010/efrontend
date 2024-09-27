@@ -1,13 +1,15 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import ArrowRight from "./ArrowIcon";
 import Cart from "./Cart";
 import MenuIcon from "./Menu";
 import Button from "./button/Button";
 import logo from "../assets/images/Oasis.png";
-import Link from 'next/link';
+import Link from "next/link";
 import Image from "next/image";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
 const Trolly = styled.button({
   width: "50px",
@@ -87,11 +89,23 @@ const DropdownMenu = styled.ul({
 
 const Header = () => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
-
+  const [data, setData] = useState([]);
+  useEffect(() => {
+    axios
+      .get("http://localhost:2000/cart")
+      .then((res) => {
+        console.log("Cart Data:", res.data.data);
+        setData(res.data.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
   const toggleDropdown = () => {
     setDropdownVisible(!dropdownVisible);
   };
-
+  const CartLength = data.length;
+  const router = useRouter();
   return (
     <RootContiner>
       <div>
@@ -110,11 +124,11 @@ const Header = () => {
         <li>
           <StyledLink href="/">Blog</StyledLink>
         </li>
-        
       </HomeMenu>
       <Flex>
-        <Trolly>
+        <Trolly onClick={() => router.push("/cart")}>
           <Cart size={20} />
+          {CartLength}
         </Trolly>
         <HeaderButton>
           <Button
@@ -150,6 +164,6 @@ const Header = () => {
       )}
     </RootContiner>
   );
-}; 
+};
 
 export default Header;

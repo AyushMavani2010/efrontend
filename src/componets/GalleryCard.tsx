@@ -77,7 +77,7 @@ const Trolly = styled.button({
 const GalleryCard: FC<GalleryProps> = ({ name, image, price, id }) => {
   const addToCart = async () => {
     try {
-      const response = await axios.post("http://localhost:2000/cart", {
+      const response = await axios.post("http://localhost:4000/cart", {
         id,
         name,
         image: image.src,

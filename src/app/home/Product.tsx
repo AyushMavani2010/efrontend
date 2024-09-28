@@ -58,7 +58,7 @@ const Product = () => {
   // Fetch data from backend
   useEffect(() => {
     axios
-      .get("http://localhost:2000/product")
+      .get("http://localhost:4000/product")
       .then(function (response) {
         setData(response.data.data);
       })
@@ -73,7 +73,7 @@ const Product = () => {
       <div>
         <Flex>
           {data.map((item: any) => {
-            const imageUrl = `http://localhost:2000/${item.image}`;
+            const imageUrl = `http://localhost:4000/${item.image}`;
             return (
               <GalleryCard
                 key={item._id}

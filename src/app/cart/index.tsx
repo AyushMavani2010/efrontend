@@ -3,14 +3,12 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import styled from "@emotion/styled";
 
-// Styling for the container
 const Container = styled.div({
   maxWidth: "1000px",
   margin: "0 auto",
   padding: "20px",
 });
 
-// Styling for the cart header
 const Header = styled.h1({
   textAlign: "center",
   fontSize: "2.5rem",
@@ -19,14 +17,12 @@ const Header = styled.h1({
   color: "#333",
 });
 
-// Styling for the table
 const Table = styled.table({
   width: "100%",
   borderCollapse: "collapse",
   marginTop: "20px",
 });
 
-// Styling for the table header cells
 const TableHeader = styled.th({
   borderBottom: "2px solid #ddd",
   padding: "15px",
@@ -35,19 +31,16 @@ const TableHeader = styled.th({
   color: "#333",
 });
 
-// Styling for the table rows
 const TableRow = styled.tr({
   borderBottom: "1px solid #ddd",
 });
 
-// Styling for the table cells
 const TableCell = styled.td({
   padding: "15px",
   fontSize: "1rem",
   textAlign: "left",
 });
 
-// Styling for the small image
 const SmallImage = styled.img({
   width: "50px",
   height: "50px",
@@ -55,7 +48,6 @@ const SmallImage = styled.img({
   borderRadius: "8px",
 });
 
-// Styling for the remove button
 const RemoveButton = styled.button({
   padding: "8px 12px",
   fontSize: "1rem",
@@ -69,36 +61,72 @@ const RemoveButton = styled.button({
   },
 });
 
-const Page = () => {
+const QuantityButton = styled.button({
+  padding: "5px",
+  fontSize: "1.2rem",
+  margin: "0 5px",
+  cursor: "pointer",
+  backgroundColor: "#f1f1f1",
+  border: "1px solid #ccc",
+});
+
+const CartPage = () => {
   const [data, setData] = useState([]);
+  const [totalPrice, setTotalPrice] = useState(0);
 
   useEffect(() => {
+    fetchCartData();
+  }, []);
+
+  const fetchCartData = () => {
     axios
-      .get("http://localhost:2000/cart")
+      .get("http://localhost:4000/cart")
       .then((res) => {
-        console.log("Cart Data:", res.data.data);
-        setData(res.data.data);
+        const cartData = res.data.data;
+        setData(cartData);
+
+        const total = cartData.reduce((sum: number, item: any) => {
+          const price = parseFloat(item.price);
+          return sum + price * item.quantity;
+        }, 0);
+        setTotalPrice(total);
       })
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  };
+
+  const increaseQuantity = (item: any) => {
+    const newQuantity = item.quantity + 1;
+    updateQuantity(item._id, newQuantity);
+  };
+
+  const decreaseQuantity = (item: any) => {
+    if (item.quantity > 1) {
+      const newQuantity = item.quantity - 1;
+      updateQuantity(item._id, newQuantity);
+    }
+  };
+
+  const updateQuantity = (id: string, newQuantity: number) => {
+    axios
+      .put(`http://localhost:4000/cart/${id}`, { quantity: newQuantity })
+      .then(() => {
+        fetchCartData(); 
+      })
+      .catch((err) => console.log(err));
+  };
 
   const handleDelete = (item: any) => {
     axios
-      .delete(`http://localhost:2000/cart/${item._id}`)
-      .then(function (response) {
-        console.log("delresponse", response.data.data);
-        window.location.reload();
+      .delete(`http://localhost:4000/cart/${item._id}`)
+      .then(() => {
+        fetchCartData();
       })
-      .catch(function (error) {
+      .catch((error) => {
         console.log(error);
       });
   };
-  const total = 0;
-  //   for (let i = 0; i <= data.length; i++) {
-
-  //   }
 
   return (
     <Container>
@@ -111,6 +139,7 @@ const Page = () => {
             <TableHeader>Price</TableHeader>
             <TableHeader>Quantity</TableHeader>
             <TableHeader>Action</TableHeader>
+            <TableHeader>Total</TableHeader>
           </TableRow>
         </thead>
         <tbody>
@@ -120,19 +149,30 @@ const Page = () => {
                 <SmallImage src={item.image} alt={item.name} />
               </TableCell>
               <TableCell>{item.name}</TableCell>
-              <TableCell>${item.price}</TableCell>
-              <TableCell>{item.quantity}</TableCell>
+              <TableCell>{item.price}</TableCell>
+              <TableCell>
+                <QuantityButton onClick={() => decreaseQuantity(item)}>
+                  -
+                </QuantityButton>
+                {item.quantity}
+                <QuantityButton onClick={() => increaseQuantity(item)}>
+                  +
+                </QuantityButton>
+              </TableCell>
               <TableCell>
                 <RemoveButton onClick={() => handleDelete(item)}>
                   Remove
                 </RemoveButton>
               </TableCell>
+              <TableCell>{(item.price * item.quantity).toFixed(2)}</TableCell>
             </TableRow>
           ))}
         </tbody>
       </Table>
+
+      <h2>Total Price: {totalPrice.toFixed(2)}</h2>
     </Container>
   );
 };
 
-export default Page;
+export default CartPage;

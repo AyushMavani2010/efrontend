@@ -92,7 +92,7 @@ const Header = () => {
   const [data, setData] = useState([]);
   useEffect(() => {
     axios
-      .get("http://localhost:2000/cart")
+      .get("http://localhost:4000/cart")
       .then((res) => {
         console.log("Cart Data:", res.data.data);
         setData(res.data.data);

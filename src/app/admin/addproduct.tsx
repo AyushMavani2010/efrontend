@@ -28,7 +28,7 @@ const Offer = () => {
     }
 
     axios
-      .post("http://localhost:2000/product", formData, {
+      .post("http://localhost:4000/product", formData, {
         headers: {
           "Content-Type": "multipart/form-data", // Ensure the correct header
         },

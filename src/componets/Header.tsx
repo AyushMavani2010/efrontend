@@ -100,7 +100,7 @@ const Header = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [1000]);
   const toggleDropdown = () => {
     setDropdownVisible(!dropdownVisible);
   };

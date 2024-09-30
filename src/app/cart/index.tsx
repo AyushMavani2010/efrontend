@@ -71,8 +71,7 @@ const QuantityButton = styled.button({
 });
 
 const CartPage = () => {
-  const [data, setData] = useState([]);
-  const [totalPrice, setTotalPrice] = useState(0);
+  const [data, setData] = useState<any[]>([]);
 
   useEffect(() => {
     fetchCartData();
@@ -83,38 +82,16 @@ const CartPage = () => {
       .get("http://localhost:4000/cart")
       .then((res) => {
         const cartData = res.data.data;
-        setData(cartData);
-
-        const total = cartData.reduce((sum: number, item: any) => {
-          const price = parseFloat(item.price);
-          return sum + price * item.quantity;
-        }, 0);
-        setTotalPrice(total);
+        setData(
+          cartData.map((item: any) => ({
+            ...item,
+            quantity: 1,
+          }))
+        );
       })
       .catch((err) => {
         console.log(err);
       });
-  };
-
-  const increaseQuantity = (item: any) => {
-    const newQuantity = item.quantity + 1;
-    updateQuantity(item._id, newQuantity);
-  };
-
-  const decreaseQuantity = (item: any) => {
-    if (item.quantity > 1) {
-      const newQuantity = item.quantity - 1;
-      updateQuantity(item._id, newQuantity);
-    }
-  };
-
-  const updateQuantity = (id: string, newQuantity: number) => {
-    axios
-      .put(`http://localhost:4000/cart/${id}`, { quantity: newQuantity })
-      .then(() => {
-        fetchCartData(); 
-      })
-      .catch((err) => console.log(err));
   };
 
   const handleDelete = (item: any) => {
@@ -126,6 +103,28 @@ const CartPage = () => {
       .catch((error) => {
         console.log(error);
       });
+  };
+
+  const handleIncrement = (itemId: string) => {
+    setData((prevData) =>
+      prevData.map((item) =>
+        item._id === itemId ? { ...item, quantity: item.quantity + 1 } : item
+      )
+    );
+  };
+
+  const handleDecrement = (itemId: string) => {
+    setData((prevData) =>
+      prevData.map((item) =>
+        item._id === itemId && item.quantity > 1
+          ? { ...item, quantity: item.quantity - 1 }
+          : item
+      )
+    );
+  };
+
+  const calculateTotalPrice = () => {
+    return data.reduce((sum, item) => sum + item.price * item.quantity, 0);
   };
 
   return (
@@ -143,7 +142,7 @@ const CartPage = () => {
           </TableRow>
         </thead>
         <tbody>
-          {data.map((item: any) => (
+          {data.map((item) => (
             <TableRow key={item._id}>
               <TableCell>
                 <SmallImage src={item.image} alt={item.name} />
@@ -151,11 +150,11 @@ const CartPage = () => {
               <TableCell>{item.name}</TableCell>
               <TableCell>{item.price}</TableCell>
               <TableCell>
-                <QuantityButton onClick={() => decreaseQuantity(item)}>
+                <QuantityButton onClick={() => handleDecrement(item._id)}>
                   -
                 </QuantityButton>
                 {item.quantity}
-                <QuantityButton onClick={() => increaseQuantity(item)}>
+                <QuantityButton onClick={() => handleIncrement(item._id)}>
                   +
                 </QuantityButton>
               </TableCell>
@@ -170,7 +169,7 @@ const CartPage = () => {
         </tbody>
       </Table>
 
-      <h2>Total Price: {totalPrice.toFixed(2)}</h2>
+      <h2>Total Price: {calculateTotalPrice().toFixed(2)}</h2>
     </Container>
   );
 };

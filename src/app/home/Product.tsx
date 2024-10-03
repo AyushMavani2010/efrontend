@@ -55,7 +55,6 @@ const FooterImage = styled.img(() => ({}));
 const Product = () => {
   const [data, setData] = useState([]);
 
-  // Fetch data from backend
   useEffect(() => {
     axios
       .get("http://localhost:4000/product")
@@ -85,42 +84,6 @@ const Product = () => {
           })}
         </Flex>
       </div>
-      {/* <Flex>
-          {data.map((item: any) => {
-            // Prepend the server URL to the image path
-            const imageUrl = `http://localhost:5000/${item.image}`;
-            return (
-              <div key={item._id}>
-                <h2 className="font-bold text-base sm:text-xl my-2">
-                  {item.name}
-                </h2>
-                <p className="font-medium text-xs sm:text-base w-full">
-                  {item.email}
-                </p>
-                <p className="md:mt-5 text-xs sm:text-base">{item.city}</p>
-                <p className="font-bold text-lg">{item.state}</p>
-                <Image
-                  src={imageUrl}
-                  alt={item.name}
-                  width={100}
-                  height={100}
-                />
-              </div>
-            );
-          })}
-        </Flex> */}
-      {/* <div>
-        <Flex>
-          {ProductData.map((item: any, index: any) => (
-            <GalleryCard
-              key={index}
-              image={item.image}
-              name={item.name}
-              price={item.price}
-            />
-          ))}
-        </Flex>
-      </div> */}
 
       <FooterArea>
         <FooterText>

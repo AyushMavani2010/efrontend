@@ -82,12 +82,20 @@ const CartPage = () => {
       .get("http://localhost:4000/cart")
       .then((res) => {
         const cartData = res.data.data;
-        setData(
-          cartData.map((item: any) => ({
-            ...item,
-            quantity: 1,
-          }))
-        );
+
+        const groupedItems = cartData.reduce((acc: any, item: any) => {
+          const existingItem = acc.find((i: any) => i.p_id === item.p_id);
+
+          if (existingItem) {
+            existingItem.quantity += 1;
+          } else {
+            acc.push({ ...item, quantity: 1 });
+          }
+
+          return acc;
+        }, []);
+
+        setData(groupedItems);
       })
       .catch((err) => {
         console.log(err);
@@ -168,8 +176,9 @@ const CartPage = () => {
           ))}
         </tbody>
       </Table>
-
-      <h2>Total Price: {calculateTotalPrice().toFixed(2)}</h2>
+      <div style={{ display: "flex", justifyContent: "end" }}>
+        <h2>Total Price: {calculateTotalPrice().toFixed(2)}</h2>
+      </div>
     </Container>
   );
 };

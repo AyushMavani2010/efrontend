@@ -60,8 +60,8 @@ const Product = () => {
       .catch(function (err) {
         console.log(err);
       });
-  }, []);
-  console.log("object", data);
+    }, []);
+    console.log("object", data);
   return (
     <RootContainer>
       <CategoriesHeading>Top Products</CategoriesHeading>
@@ -75,6 +75,7 @@ const Product = () => {
               name={item.name}
               image={{ src: imageUrl }}
               price={item.price}
+              id={item._id}
             />
           );
         })}

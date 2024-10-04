@@ -2,16 +2,31 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import styled from "@emotion/styled";
+import { useRouter } from "next/navigation";
 
+// Styled components for layout
 const Container = styled.div({
-  maxWidth: "1000px",
+  display: "flex",
+  justifyContent: "space-between",
+  maxWidth: "1200px",
   margin: "0 auto",
   padding: "20px",
 });
 
+const LeftSection = styled.div({
+  width: "65%",
+});
+
+const RightSection = styled.div({
+  width: "30%",
+  padding: "20px",
+  border: "1px solid #ddd",
+  borderRadius: "8px",
+  backgroundColor: "#f9f9f9",
+});
+
 const Header = styled.h1({
-  textAlign: "center",
-  fontSize: "2.5rem",
+  fontSize: "2rem",
   fontWeight: "bold",
   marginBottom: "20px",
   color: "#333",
@@ -20,14 +35,13 @@ const Header = styled.h1({
 const Table = styled.table({
   width: "100%",
   borderCollapse: "collapse",
-  marginTop: "20px",
 });
 
 const TableHeader = styled.th({
   borderBottom: "2px solid #ddd",
   padding: "15px",
   textAlign: "left",
-  fontSize: "1.2rem",
+  fontSize: "1.1rem",
   color: "#333",
 });
 
@@ -38,12 +52,11 @@ const TableRow = styled.tr({
 const TableCell = styled.td({
   padding: "15px",
   fontSize: "1rem",
-  textAlign: "left",
 });
 
 const SmallImage = styled.img({
-  width: "50px",
-  height: "50px",
+  width: "80px",
+  height: "80px",
   objectFit: "cover",
   borderRadius: "8px",
 });
@@ -68,6 +81,40 @@ const QuantityButton = styled.button({
   cursor: "pointer",
   backgroundColor: "#f1f1f1",
   border: "1px solid #ccc",
+});
+
+const TotalsContainer = styled.div({
+  marginTop: "20px",
+});
+
+const TotalsRow = styled.div({
+  display: "flex",
+  justifyContent: "space-between",
+  padding: "10px 0",
+  fontSize: "1rem",
+});
+
+const TotalsLabel = styled.div({
+  color: "#333",
+});
+
+const TotalsValue = styled.div({
+  fontWeight: "bold",
+});
+
+const ProceedButton = styled.button({
+  marginTop: "20px",
+  padding: "12px",
+  width: "100%",
+  fontSize: "1.2rem",
+  fontWeight: "bold",
+  color: "#fff",
+  backgroundColor: "#000",
+  border: "none",
+  cursor: "pointer",
+  ":hover": {
+    backgroundColor: "#333",
+  },
 });
 
 const CartPage = () => {
@@ -135,50 +182,69 @@ const CartPage = () => {
     return data.reduce((sum, item) => sum + item.price * item.quantity, 0);
   };
 
+  const router = useRouter();
+
   return (
     <Container>
-      <Header>Cart</Header>
-      <Table>
-        <thead>
-          <TableRow>
-            <TableHeader>Image</TableHeader>
-            <TableHeader>Name</TableHeader>
-            <TableHeader>Price</TableHeader>
-            <TableHeader>Quantity</TableHeader>
-            <TableHeader>Action</TableHeader>
-            <TableHeader>Total</TableHeader>
-          </TableRow>
-        </thead>
-        <tbody>
-          {data.map((item) => (
-            <TableRow key={item._id}>
-              <TableCell>
-                <SmallImage src={item.image} alt={item.name} />
-              </TableCell>
-              <TableCell>{item.name}</TableCell>
-              <TableCell>{item.price}</TableCell>
-              <TableCell>
-                <QuantityButton onClick={() => handleDecrement(item._id)}>
-                  -
-                </QuantityButton>
-                {item.quantity}
-                <QuantityButton onClick={() => handleIncrement(item._id)}>
-                  +
-                </QuantityButton>
-              </TableCell>
-              <TableCell>
-                <RemoveButton onClick={() => handleDelete(item)}>
-                  Remove
-                </RemoveButton>
-              </TableCell>
-              <TableCell>{(item.price * item.quantity).toFixed(2)}</TableCell>
+      {/* Left Section: Shopping Cart */}
+      <LeftSection>
+        <Header>Shopping cart</Header>
+        <Table>
+          <thead>
+            <TableRow>
+              <TableHeader>Product</TableHeader>
+              <TableHeader>Price</TableHeader>
+              <TableHeader>Quantity</TableHeader>
+              <TableHeader>Subtotal</TableHeader>
             </TableRow>
-          ))}
-        </tbody>
-      </Table>
-      <div style={{ display: "flex", justifyContent: "end" }}>
-        <h2>Total Price: {calculateTotalPrice().toFixed(2)}</h2>
-      </div>
+          </thead>
+          <tbody>
+            {data.map((item) => (
+              <TableRow key={item._id}>
+                <TableCell>
+                  <SmallImage src={item.image} alt={item.name} />
+                  {item.name}
+                </TableCell>
+                <TableCell>₹{Number(item.price || 0).toFixed(2)}</TableCell>
+                <TableCell>
+                  <QuantityButton onClick={() => handleDecrement(item._id)}>
+                    -
+                  </QuantityButton>
+                  {item.quantity}
+                  <QuantityButton onClick={() => handleIncrement(item._id)}>
+                    +
+                  </QuantityButton>
+                </TableCell>
+                <TableCell>
+                  ₹{(Number(item.price || 0) * item.quantity).toFixed(2)}
+                </TableCell>
+              </TableRow>
+            ))}
+          </tbody>
+        </Table>
+      </LeftSection>
+
+      {/* Right Section: Cart Totals */}
+      <RightSection>
+        <Header>Cart totals</Header>
+        <TotalsContainer>
+          <TotalsRow>
+            <TotalsLabel>Subtotal</TotalsLabel>
+            <TotalsValue>₹{calculateTotalPrice().toFixed(2)}</TotalsValue>
+          </TotalsRow>
+          <TotalsRow>
+            <TotalsLabel>Shipping</TotalsLabel>
+            <TotalsValue>Free shipping</TotalsValue>
+          </TotalsRow>
+          <TotalsRow>
+            <TotalsLabel>Total</TotalsLabel>
+            <TotalsValue>₹{calculateTotalPrice().toFixed(2)}</TotalsValue>
+          </TotalsRow>
+          <ProceedButton onClick={() => router.push("/payment")}>
+            Proceed to checkout
+          </ProceedButton>
+        </TotalsContainer>
+      </RightSection>
     </Container>
   );
 };

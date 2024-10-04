@@ -10,7 +10,7 @@ interface GalleryProps {
   name: string;
   image?: any;
   price?: string;
-  id: string;
+  id?: string;
 }
 
 const RootContainer = styled.div(() => ({

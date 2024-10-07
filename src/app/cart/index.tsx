@@ -3,8 +3,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import styled from "@emotion/styled";
 import { useRouter } from "next/navigation";
+import { useCart } from "../../componets/CartContext";
 
-// Styled components for layout
 const Container = styled.div({
   display: "flex",
   justifyContent: "space-between",
@@ -119,6 +119,9 @@ const ProceedButton = styled.button({
 
 const CartPage = () => {
   const [data, setData] = useState<any[]>([]);
+  const { cartItems } = useCart();
+  const CartLength = cartItems.length;
+
 
   useEffect(() => {
     fetchCartData();
@@ -181,12 +184,16 @@ const CartPage = () => {
   const calculateTotalPrice = () => {
     return data.reduce((sum, item) => sum + item.price * item.quantity, 0);
   };
+  const handleProceedToPayment = () => {
+    const total = calculateTotalPrice();
+
+    router.push(`/payment?total=${total}`);
+  };
 
   const router = useRouter();
 
   return (
     <Container>
-      {/* Left Section: Shopping Cart */}
       <LeftSection>
         <Header>Shopping cart</Header>
         <Table>
@@ -224,7 +231,6 @@ const CartPage = () => {
         </Table>
       </LeftSection>
 
-      {/* Right Section: Cart Totals */}
       <RightSection>
         <Header>Cart totals</Header>
         <TotalsContainer>
@@ -240,13 +246,18 @@ const CartPage = () => {
             <TotalsLabel>Total</TotalsLabel>
             <TotalsValue>₹{calculateTotalPrice().toFixed(2)}</TotalsValue>
           </TotalsRow>
-          <ProceedButton onClick={() => router.push("/payment")}>
+          <ProceedButton onClick={handleProceedToPayment}>
             Proceed to checkout
           </ProceedButton>
         </TotalsContainer>
       </RightSection>
     </Container>
   );
+  
 };
 
 export default CartPage;
+
+
+
+

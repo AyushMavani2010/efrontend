@@ -8,8 +8,8 @@ import Button from "./button/Button";
 import logo from "../assets/images/Oasis.png";
 import Link from "next/link";
 import Image from "next/image";
-import axios from "axios";
 import { useRouter } from "next/navigation";
+import { useCart } from "../componets/CartContext";
 
 const Trolly = styled.button({
   width: "50px",
@@ -89,22 +89,13 @@ const DropdownMenu = styled.ul({
 
 const Header = () => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
-  const [data, setData] = useState([]);
-  useEffect(() => {
-    axios
-      .get("http://localhost:4000/cart")
-      .then((res) => {
-        console.log("Cart Data:", res.data.data);
-        setData(res.data.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  },[]);
+  const { cartItems } = useCart();
+
+  const CartLength = cartItems.length;
+
   const toggleDropdown = () => {
     setDropdownVisible(!dropdownVisible);
   };
-  const CartLength = data.length;
 
   const router = useRouter();
   return (

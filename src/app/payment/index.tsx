@@ -90,75 +90,110 @@ const PaymentPage = () => {
   const router = useRouter();
 
   useEffect(() => {
-    // Get total price from the query params
     const query = new URLSearchParams(window.location.search);
     const total = query.get("total");
-
+    const userId = query.get("userId");
     if (total) {
       setTotalPrice(Number(total));
     }
   }, []);
 
-  const handlePaymentSubmit = (e: React.FormEvent) => {
+  const handlePaymentSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle payment logic
-    alert("Payment Successful!");
-    router.push("/success");
+
+    const paymentData = {
+      cardNumber,
+      expiryDate,
+      cvv,
+      billingAddress,
+      totalPrice,
+    };
+
+    try {
+      const response = await fetch("http://localhost:4000/payment", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(paymentData),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        alert("Payment Successful!");
+
+        const userId = new URLSearchParams(window.location.search).get(
+          "userId"
+        );
+
+        const deleteCartResponse = await fetch(
+          `http://localhost:4000/cart/${userId}`,
+          {
+            method: "DELETE",
+          }
+        );
+
+        setCardNumber("");
+        setExpiryDate("");
+        setCvv("");
+        setBillingAddress("");
+        setTotalPrice(0);
+      } else {
+        alert("Payment failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error processing payment:", error);
+      alert("An error occurred. Please try again later.");
+    }
   };
 
   return (
     <Container>
-      <PaymentForm onSubmit={handlePaymentSubmit}>
-        <Header>Payment Details</Header>
+      <PaymentForm>
+        <form onSubmit={handlePaymentSubmit}>
+          <Header>Payment Details</Header>
 
-        <Label>Card Number</Label>
-        <Input
-          type="text"
-          value={cardNumber}
-          onChange={(e) => setCardNumber(e.target.value)}
-          placeholder="Enter card number"
-        />
+          <Label>Card Number</Label>
+          <Input
+            type="text"
+            value={cardNumber}
+            onChange={(e) => setCardNumber(e.target.value)}
+            placeholder="Enter card number"
+          />
 
-        <Label>Expiry Date</Label>
-        <Input
-          type="text"
-          value={expiryDate}
-          onChange={(e) => setExpiryDate(e.target.value)}
-          placeholder="MM/YY"
-        />
+          <Label>Expiry Date</Label>
+          <Input
+            type="text"
+            value={expiryDate}
+            onChange={(e) => setExpiryDate(e.target.value)}
+            placeholder="MM/YY"
+          />
 
-        <Label>CVV</Label>
-        <Input
-          type="text"
-          value={cvv}
-          onChange={(e) => setCvv(e.target.value)}
-          placeholder="CVV"
-        />
+          <Label>CVV</Label>
+          <Input
+            type="text"
+            value={cvv}
+            onChange={(e) => setCvv(e.target.value)}
+            placeholder="CVV"
+          />
 
-        <Label>Billing Address</Label>
-        <Input
-          type="text"
-          value={billingAddress}
-          onChange={(e) => setBillingAddress(e.target.value)}
-          placeholder="Enter billing address"
-        />
+          <Label>Billing Address</Label>
+          <Input
+            type="text"
+            value={billingAddress}
+            onChange={(e) => setBillingAddress(e.target.value)}
+            placeholder="Enter billing address"
+          />
 
-        <TotalsContainer>
-          <TotalsRow>
-            <TotalsLabel>Subtotal</TotalsLabel>
-            <TotalsValue>₹{totalPrice.toFixed(2)}</TotalsValue>
-          </TotalsRow>
-          <TotalsRow>
-            <TotalsLabel>Shipping</TotalsLabel>
-            <TotalsValue>Free</TotalsValue>
-          </TotalsRow>
-          <TotalsRow>
-            <TotalsLabel>Total</TotalsLabel>
-            <TotalsValue>₹{totalPrice.toFixed(2)}</TotalsValue>
-          </TotalsRow>
-        </TotalsContainer>
+          <TotalsContainer>
+            <TotalsRow>
+              <TotalsLabel>Total Price</TotalsLabel>
+              <TotalsValue>₹{totalPrice.toFixed(2)}</TotalsValue>
+            </TotalsRow>
+          </TotalsContainer>
 
-        <Button type="submit">Pay Now</Button>
+          <Button type="submit">Pay Now</Button>
+        </form>
       </PaymentForm>
     </Container>
   );

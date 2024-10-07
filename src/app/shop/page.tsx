@@ -13,7 +13,6 @@ const shop = () => {
       <Hero />
       <Slider />
       <Product />
-      {/* <ProductListing /> */}
     </>
   );
 };

@@ -5,6 +5,7 @@ import { useSnackbar } from "@mui/base/useSnackbar";
 import { ClickAwayListener } from "@mui/base/ClickAwayListener";
 import { css, keyframes, styled as muiStyled } from "@mui/system";
 import Cart from "./Cart";
+import { useCart } from "./CartContext";
 
 interface GalleryProps {
   name: string;
@@ -126,6 +127,7 @@ const CustomSnackbar = muiStyled("div")(
 
 const GalleryCard: FC<GalleryProps> = ({ name, image, price, id }) => {
   const [open, setOpen] = useState(false);
+  const { addToCart } = useCart();
 
   const handleClose = () => {
     setOpen(false);
@@ -137,18 +139,14 @@ const GalleryCard: FC<GalleryProps> = ({ name, image, price, id }) => {
     autoHideDuration: 5000,
   });
 
-  const addToCart = async () => {
-    console.log("name", name);
-    console.log("name", price);
-    console.log("id", id);
+  const handleAddToCart = async () => {
     try {
-      const response = await axios.post("http://localhost:4000/cart", {
+      addToCart({
         name,
         image: image.src,
         price,
         p_id: id,
       });
-      console.log("Added to cart:", response.data);
       setOpen(true);
     } catch (error) {
       console.error("Error adding to cart:", error);
@@ -173,7 +171,7 @@ const GalleryCard: FC<GalleryProps> = ({ name, image, price, id }) => {
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <Color />
             <button
-              onClick={addToCart}
+              onClick={handleAddToCart}
               style={{ border: "none", backgroundColor: "white" }}
             >
               <Cart size={20} />

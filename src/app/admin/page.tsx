@@ -1,10 +1,10 @@
 import React from "react";
-import Hero from "./addproduct";
+import AddProduct from "./addproduct";
 
 const Index = () => {
   return (
     <>
-      <Hero />
+      <AddProduct />
     </>
   );
 };

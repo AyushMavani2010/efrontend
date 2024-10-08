@@ -2,8 +2,8 @@
 
 import React, { useRef } from "react";
 import styled from "@emotion/styled";
-import OwlCarousel from "react-owl-carousel2"; // Updated import
-import "react-owl-carousel2/lib/styles.css"; // Import necessary styles
+import OwlCarousel from "react-owl-carousel2";
+import "react-owl-carousel2/lib/styles.css";
 import ArrowLeft from "../../componets/ArrowLeft";
 import ArrowRight from "../../componets/ArrowIcon";
 import { ProductData } from "../../database/index";
@@ -46,7 +46,7 @@ const options = {
   responsiveClass: true,
   nav: false,
   dots: false,
-  loop: true, // Enable looping for the carousel
+  loop: true,
   responsive: {
     0: {
       items: 1,

@@ -88,14 +88,14 @@ const DropdownMenu = styled.ul({
 });
 
 const Header = () => {
-  const [dropdownVisible, setDropdownVisible] = useState(false);
+  // const [dropdownVisible, setDropdownVisible] = useState(false);
   const { cartItems } = useCart();
 
   const CartLength = cartItems.length;
 
-  const toggleDropdown = () => {
-    setDropdownVisible(!dropdownVisible);
-  };
+  // const toggleDropdown = () => {
+  //   setDropdownVisible(!dropdownVisible);
+  // };
 
   const router = useRouter();
   return (
@@ -134,11 +134,11 @@ const Header = () => {
             border="none"
           />
         </HeaderButton>
-        <MenuIconWrapper onClick={toggleDropdown}>
+        {/* <MenuIconWrapper onClick={toggleDropdown}>
           <MenuIcon size={30} color="black" />
-        </MenuIconWrapper>
+        </MenuIconWrapper> */}
       </Flex>
-      {dropdownVisible && (
+      {/* {dropdownVisible && ( */}
         <DropdownMenu>
           <li>
             <StyledLink href="/">Home</StyledLink>
@@ -153,7 +153,7 @@ const Header = () => {
             <StyledLink href="#">Blog</StyledLink>
           </li>
         </DropdownMenu>
-      )}
+      {/* )} */}
     </RootContiner>
   );
 };

@@ -122,7 +122,6 @@ const CartPage = () => {
   const { cartItems } = useCart();
   const CartLength = cartItems.length;
 
-
   useEffect(() => {
     fetchCartData();
   }, []);
@@ -152,23 +151,13 @@ const CartPage = () => {
       });
   };
 
-  const handleDelete = (item: any) => {
-    axios
-      .delete(`http://localhost:4000/cart/${item._id}`)
-      .then(() => {
-        fetchCartData();
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
   const handleIncrement = (itemId: string) => {
     setData((prevData) =>
       prevData.map((item) =>
         item._id === itemId ? { ...item, quantity: item.quantity + 1 } : item
       )
     );
+    CartLength + 1;
   };
 
   const handleDecrement = (itemId: string) => {
@@ -179,14 +168,15 @@ const CartPage = () => {
           : item
       )
     );
+    CartLength -1;
   };
 
   const calculateTotalPrice = () => {
     return data.reduce((sum, item) => sum + item.price * item.quantity, 0);
   };
+  
   const handleProceedToPayment = () => {
     const total = calculateTotalPrice();
-
     router.push(`/payment?total=${total}`);
   };
 
@@ -253,11 +243,6 @@ const CartPage = () => {
       </RightSection>
     </Container>
   );
-  
 };
 
 export default CartPage;
-
-
-
-

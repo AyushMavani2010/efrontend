@@ -1,9 +1,10 @@
 import React from "react";
-import Index from "../cart/index";
+import CartPage from "./cart";
+
 const page = () => {
   return (
     <div>
-      <Index />
+      <CartPage />
     </div>
   );
 };

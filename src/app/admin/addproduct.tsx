@@ -1,8 +1,9 @@
 "use client";
+import { ProductAddResponse } from "@/src/types/Product";
 import axios from "axios";
 import React, { useState } from "react";
 
-const Offer = () => {
+const AddProduct = () => {
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [image, setImage] = useState<File | null>(null);
@@ -22,8 +23,7 @@ const Offer = () => {
           "Content-Type": "multipart/form-data",
         },
       })
-      .then((response: any) => {
-        console.log(response.data.data);
+      .then(() => { 
         setName("");
         setPrice("");
         setImage(null);
@@ -69,4 +69,4 @@ const Offer = () => {
   );
 };
 
-export default Offer;
+export default AddProduct;
